@@ -213,6 +213,8 @@ class IrRemoteTV(MediaPlayerEntity, RestoreEntity):
                 new_source_index = source_info['index']
             if source_info['name'] == self._source:
                 old_source_index = source_info['index']
+        if old_source_index is None:
+            old_source_index = 0
         if new_source_index == old_source_index:
             return
         step = new_source_index - old_source_index
