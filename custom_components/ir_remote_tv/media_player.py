@@ -325,6 +325,8 @@ class IrRemoteTV(MediaPlayerEntity, RestoreEntity):
             await self.async_volume_up(update_request_time=False, execute=False)
         if execute_command == 'volumeDown':
             await self.async_volume_down(update_request_time=False, execute=False)
+        if execute_command == 'mute':
+            await self.async_mute_volume(not self._attr_is_volume_muted, execute=False)
 
     async def _homekit_event_handler(self, event):
         data = event.data
