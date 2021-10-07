@@ -1,0 +1,71 @@
+{
+  "manufacturer": "haier",
+  "model": "universal",
+  "protocol": "nec",
+  "commands": {
+    "powerOn": {
+      "address": 6168,
+      "command": 53295,
+      "raw": "nE5m02lk0mk3mEsms1mQAfgBxMZtOACOAD8APwA/BB8APwKfAp8BDwA/AD8DjwEPBj8Aj5lLJnOZxOZhLBH0mUymc1ATSczaYzGYwAA="
+    },
+    "powerOff": {
+      "address": 6168,
+      "command": 53295,
+      "raw": "nE5m02lk0mk3mEsms1mQAfgBxMZtOACOAD8APwA/BB8APwKfAp8BDwA/AD8DjwEPBj8Aj5lLJnOZxOZhLBH0mUymc1ATSczaYzGYwAA="
+    },
+    "previousChannel": {
+      "address": 6168,
+      "command": 39015,
+      "raw": "nE5m02lk0mk3mEsms1mQAfgBxMZtOACOAD8APwA/BB8APwKfAY8ELwHfAD8DHwMfAh8Aj5lLJnOZxOZhLBH0mUymc1ATSczaYzGYwAA="
+    },
+    "nextChannel": {
+      "address": 6168,
+      "command": 6375,
+      "raw": "nE5m02lk0mk3mEsms1mQAfgBxMZtOACOAD8APwA/BB8APwA/AD8EHwHfAp8AjwMvAq8Aj5lLJnOZxOZhLBH0mUymc1ATSczaYzGYwAA="
+    },
+    "volumeDown": {
+      "address": 6168,
+      "command": 22695,
+      "raw": "nE5m02lk0mk3mEsms1mQAfgBxMZtOACOAD8APwA/BB8APwA/Ao8ELwLvAp8BDwMfAY8Aj5lLJnOZxOZhLBH0mUymc1ATSczaYzGYwAA="
+    },
+    "volumeUp": {
+      "address": 6168,
+      "command": 55335,
+      "raw": "nE5m02lk0mk3mEsms1mQAfgBxMZtOACOAD8APwA/BB8APwKfAp8BnwN/AD8DnwMPAY8Aj5lLJnOZxOZhLBH0mUymc1ATSczaYzGYwAA="
+    },
+    "mute": {
+      "address": 6168,
+      "command": 12495,
+      "raw": "nE5m02lk0mk3mEsms1mQAfgBxMZtOACOAD8APwA/BB8APwA/A58DnwA/Ax8DHwIfAh8Aj5lLJnOZxOZhLBH0mUymc1ATSczaYzGYwAA="
+    },
+    "selectSource": {
+      "address": 6168,
+      "command": 43095,
+      "raw": "nE5m02lk0mk3mEsms1mQAfgBxMZtOACOAD8APwA/BB8APwKfAQ8BDwNvAD8CjwEPAQ8Aj5lLJnOZxOZhLBH0mUymc1ATSczaYzGYwAA="
+    },
+    "left": {
+      "address": 6168,
+      "command": 42585,
+      "raw": "nE5m02lk0mk3mEsms1mQAfgBxMZtOACOAD8APwA/BB8APwKfAQ8CXwU/Ad8BjwEPAZ8CH5lLJnOZxOZhLBH0mUymc1ATSczaYzGYwAA="
+    },
+    "right": {
+      "address": 6168,
+      "command": 58905,
+      "raw": "nE5m02lk0mk3mEsms1mQAfgBxMZtOACOAD8APwA/BB8APwKfAI8CbwIfAh8APwMfAx8CH5lLJnOZxOZhLBH0mUymc1ATSczaYzGYwAA="
+    },
+    "ok": {
+      "address": 6168,
+      "command": 5865,
+      "raw": "nE5m02lk0mk3mEsms1mQAfgBxMZtOACOAD8APwA/BB8APwA/AD8DjwUvAZ8AjwIvAQ8Bj5lLJnOZxOZhLBH0mUymc1ATSczaYzGYwAA="
+    }
+  },
+  "switchSoure": {
+    "type": "CombinationKeys",
+    "previous": "left",
+    "next": "right",
+    "sourceList": [
+      { "name": "HDMI 1", "index": 0 },
+      { "name": "HDMI 2", "index": 1 }
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+{
+    "domain": "ir_remote_tv",
+    "name": "IR Remote TV",
+    "documentation": "https://github.com/xiaolanglanglang/ir_remote_tv",
+    "issue_tracker": "https://github.com/xiaolanglanglang/ir_remote_tv/issue",
+    "dependencies": [],
+    "after_dependencies": [],
+    "codeowners": ["@xiaolanglanglang"],
+    "requirements": [],
+    "iot_class": "local_polling",
+    "config_flow": false,
+    "version": "0.1.0"
+  }
