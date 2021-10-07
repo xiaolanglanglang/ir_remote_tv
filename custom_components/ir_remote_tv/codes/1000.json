@@ -43,6 +43,16 @@
       "command": 43095,
       "raw": "nE5m02lk0mk3mEsms1mQAfgBxMZtOACOAD8APwA/BB8APwKfAQ8BDwNvAD8CjwEPAQ8Aj5lLJnOZxOZhLBH0mUymc1ATSczaYzGYwAA="
     },
+    "up": {
+      "address": 6168,
+      "command": 9945,
+      "raw": "nE5m02lk0mk3mEsms1mQAfgBxMZtOACOAD8APwA/BB8APwA/A58BjwUvAZ8BnwGfAZ8CH5lLJnOZxOZhLBH0mUymc1ATSczaYzGYwAA="
+    },
+    "down": {
+      "address": 6168,
+      "command": 26265,
+      "raw": "nE5m02lk0mk3mEsms1mQAfgBxMZtOACOAD8APwA/BB8APwA/Ax8B3wIfAZ8DLwGPAh8CH5lLJnOZxOZhLBH0mUymc1ATSczaYzGYwAA="
+    },
     "left": {
       "address": 6168,
       "command": 42585,
@@ -57,6 +67,16 @@
       "address": 6168,
       "command": 5865,
       "raw": "nE5m02lk0mk3mEsms1mQAfgBxMZtOACOAD8APwA/BB8APwA/AD8DjwUvAZ8AjwIvAQ8Bj5lLJnOZxOZhLBH0mUymc1ATSczaYzGYwAA="
+    },
+    "back": {
+      "address": 6168,
+      "command": 38505,
+      "raw": "nE5m02lk0mk3mEsms1mQAfgBxMZtOACOAD8APwA/BB8APwKfAY8BjwU/Au8CHwIfAQ8Bj5lLJnOZxOZhLBH0mUymc1ATSczaYzGYwAA="
+    },
+    "info": {
+      "address": 6168,
+      "command": 1275,
+      "raw": "nE5m02lk0mk3mEsms1mQAfgBxMZtOACOAD8APwA/BB8APwA/AD8APwSPAY8AjwCPA88Bn5lLJnOZxOZhLBH0mUymc1ATSczaYzGYwAA="
     }
   },
   "switchSoure": {
@@ -67,5 +87,15 @@
       { "name": "HDMI 1", "index": 0 },
       { "name": "HDMI 2", "index": 1 }
     ]
+  },
+  "homekitMap": {
+    "arrow_up": "up",
+    "arrow_down": "down",
+    "arrow_left": "left",
+    "arrow_right": "right",
+    "select": "ok",
+    "play_pause": "ok",
+    "back": "back",
+    "information": "info"
   }
 }

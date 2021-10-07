@@ -26,6 +26,7 @@ CONF_DEVICE_CODE = 'device_code'
 CONF_REMOTE_ENTITY_ID = 'remote_entity_id'
 CONF_POWER_SENSOR = 'power_sensor'
 CONF_EVENT_NAME = 'event_name'
+CONF_LISTEN_HOMEKIT_REMOTE = 'listen_homekit_remote'
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Optional(CONF_UNIQUE_ID): cv.string,
@@ -35,6 +36,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Optional(CONF_POWER_SENSOR): cv.entity_id,
     vol.Optional(CONF_POWER_SENSOR): cv.entity_id,
     vol.Optional(CONF_EVENT_NAME): cv.string,
+    vol.Optional(CONF_LISTEN_HOMEKIT_REMOTE, default=False): cv.boolean,
 })
 
 
@@ -64,11 +66,13 @@ class IrRemoteTV(MediaPlayerEntity, RestoreEntity):
         self._power_sensor = config.get(CONF_POWER_SENSOR)
         self._remote_entity_id = config.get(CONF_REMOTE_ENTITY_ID)
         self._event_name = config.get(CONF_EVENT_NAME)
+        self._listen_homekit_event = config.get(CONF_LISTEN_HOMEKIT_REMOTE)
 
         self._manufacturer = device_data['manufacturer']
         self._model = device_data['model']
         self._commands = device_data['commands']
         self._switch_source = device_data['switchSoure']
+        self._homekit_map = device_data['homekitMap']
 
         self._state = STATE_OFF
         self._sources_list = []
@@ -101,7 +105,9 @@ class IrRemoteTV(MediaPlayerEntity, RestoreEntity):
                 self._source = self._sources_list[0]
 
         if self._event_name is not None:
-            hass.bus.async_listen(self._event_name, self._event_handler)
+            hass.bus.async_listen(self._event_name, self._ir_receiver_event_handler)
+        if self._listen_homekit_event:
+            hass.bus.async_listen('homekit_tv_remote_key_pressed', self._homekit_event_handler)
 
     @property
     def supported_features(self):
@@ -140,14 +146,16 @@ class IrRemoteTV(MediaPlayerEntity, RestoreEntity):
     async def async_turn_off(self):
         date = datetime.now()
         self._last_command_request_time = date
-        await self.async_send_ir_command('powerOff', date)
+        if self._state == STATE_PLAYING:
+            await self.async_send_ir_command('powerOff', date)
         self._state = STATE_OFF
         await self.async_update_ha_state()
 
     async def async_turn_on(self):
         date = datetime.now()
         self._last_command_request_time = date
-        await self.async_send_ir_command('powerOn', date)
+        if self._state == STATE_OFF:
+            await self.async_send_ir_command('powerOn', date)
         self._state = STATE_PLAYING
         await self.async_update_ha_state()
 
@@ -293,7 +301,7 @@ class IrRemoteTV(MediaPlayerEntity, RestoreEntity):
             except Exception as e:
                 _LOGGER.exception(e)
 
-    async def _event_handler(self, event):
+    async def _ir_receiver_event_handler(self, event):
         print(event.data)
         data = event.data
         execute_command = None
@@ -317,6 +325,15 @@ class IrRemoteTV(MediaPlayerEntity, RestoreEntity):
             await self.async_volume_up(update_request_time=False, execute=False)
         if execute_command == 'volumeDown':
             await self.async_volume_down(update_request_time=False, execute=False)
+
+    async def _homekit_event_handler(self, event):
+        data = event.data
+        if data['entity_id'] != self.entity_id:
+            return
+        command = self._homekit_map[data['key_name']]
+        date = datetime.now()
+        self._last_command_request_time = date
+        await self.async_send_ir_command(command, date)
 
 
 class CommandHistory:
