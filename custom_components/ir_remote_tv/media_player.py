@@ -1,7 +1,7 @@
 import logging
 import asyncio
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 import json
 
 from homeassistant.components.media_player import (MediaPlayerEntity, PLATFORM_SCHEMA, DEVICE_CLASS_TV)
@@ -84,6 +84,7 @@ class IrRemoteTV(MediaPlayerEntity, RestoreEntity):
         self._command_history = []
         self._temp_lock = asyncio.Lock()
         self._last_command_request_time = datetime.now()
+        self._last_power_operation_time = datetime.now()
 
         if 'powerOn' in self._commands:
             self._support_flags = self._support_flags | SUPPORT_TURN_ON
@@ -143,20 +144,22 @@ class IrRemoteTV(MediaPlayerEntity, RestoreEntity):
     def source(self):
         return self._source
 
-    async def async_turn_off(self):
+    async def async_turn_off(self , execute=True):
         date = datetime.now()
         self._last_command_request_time = date
-        if self._state == STATE_PLAYING:
+        if self._state == STATE_PLAYING and execute:
             await self.async_send_ir_command('powerOff', date)
         self._state = STATE_OFF
+        self._last_power_operation_time = date
         await self.async_update_ha_state()
 
-    async def async_turn_on(self):
+    async def async_turn_on(self, execute=True):
         date = datetime.now()
         self._last_command_request_time = date
-        if self._state == STATE_OFF:
+        if self._state == STATE_OFF and execute:
             await self.async_send_ir_command('powerOn', date)
         self._state = STATE_PLAYING
+        self._last_power_operation_time = date
         await self.async_update_ha_state()
 
     async def async_media_previous_track(self):
@@ -280,6 +283,9 @@ class IrRemoteTV(MediaPlayerEntity, RestoreEntity):
         power_state = self.hass.states.get(self._power_sensor)
         if power_state is None:
             return
+        date = datetime.now()
+        if self._last_power_operation_time - date < timedelta(seconds=30):
+            return
         if power_state.state == STATE_ON:
             self._state = STATE_PLAYING
         if power_state.state == STATE_OFF:
@@ -327,6 +333,10 @@ class IrRemoteTV(MediaPlayerEntity, RestoreEntity):
             await self.async_volume_down(update_request_time=False, execute=False)
         if execute_command == 'mute':
             await self.async_mute_volume(not self._attr_is_volume_muted, execute=False)
+        if execute_command == 'powerOn':
+            await self.async_turn_on(execute=False)
+        if execute_command == 'powerOff':
+            await self.async_turn_off(execute=False)
 
     async def _homekit_event_handler(self, event):
         data = event.data
