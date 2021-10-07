@@ -261,7 +261,6 @@ class IrRemoteTV(MediaPlayerEntity, RestoreEntity):
         if power_state.state == STATE_ON:
             self._state = STATE_PLAYING
         if power_state.state == STATE_OFF:
-            self._source = None
             self._state = STATE_OFF
 
     async def async_send_ir_command(self, command, time):
