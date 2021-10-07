@@ -284,7 +284,7 @@ class IrRemoteTV(MediaPlayerEntity, RestoreEntity):
         if power_state is None:
             return
         date = datetime.now()
-        if self._last_power_operation_time - date < timedelta(seconds=30):
+        if date - self._last_power_operation_time < timedelta(seconds=30):
             return
         if power_state.state == STATE_ON:
             self._state = STATE_PLAYING
@@ -297,11 +297,12 @@ class IrRemoteTV(MediaPlayerEntity, RestoreEntity):
             if time < self._last_command_request_time:
                 return False
             try:
+                raw = self._commands[command]['raw']
                 if self._event_name is not None :
-                    self._command_history.append(CommandHistory(command, time))
+                    self._command_history.append(CommandHistory(command, raw, time))
                 service_data = {
                     ATTR_ENTITY_ID: self._remote_entity_id,
-                    'command': self._commands[command]['raw']
+                    'command': raw
                 }
                 return await self.hass.services.async_call('remote', 'send_command', service_data, blocking=True)
             except Exception as e:
@@ -311,11 +312,13 @@ class IrRemoteTV(MediaPlayerEntity, RestoreEntity):
         print(event.data)
         data = event.data
         execute_command = None
+        raw = None
         for name in self._commands:
             command = self._commands[name]
             if command['address'] != data['address'] or command['command'] != data['command']:
                 continue
             execute_command = name
+            raw = command['raw']
         if not execute_command:
             return
         async with self._temp_lock:
@@ -323,7 +326,7 @@ class IrRemoteTV(MediaPlayerEntity, RestoreEntity):
                 if history.is_outdate():
                     self._command_history.remove(history)
                     continue
-                if history.command() == execute_command:
+                if history.raw() == raw:
                     _LOGGER.debug('Command %s is already in history', execute_command)
                     self._command_history.remove(history)
                     return
@@ -350,8 +353,9 @@ class IrRemoteTV(MediaPlayerEntity, RestoreEntity):
 
 class CommandHistory:
 
-    def __init__(self, command, date):
+    def __init__(self, command, raw, date):
         self._command = command
+        self._raw = raw
         self._date = date
 
     def command(self):
@@ -359,6 +363,9 @@ class CommandHistory:
 
     def date(self):
         return self._date
+
+    def raw(self):
+        return self._raw
 
     def is_outdate(self):
         return (datetime.now() - self._date).total_seconds() > 60
