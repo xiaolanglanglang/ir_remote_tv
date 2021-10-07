@@ -148,7 +148,7 @@ class IrRemoteTV(MediaPlayerEntity, RestoreEntity):
         date = datetime.now()
         self._last_command_request_time = date
         await self.async_send_ir_command('powerOn', date)
-        self._state = STATE_ON
+        self._state = STATE_PLAYING
         await self.async_update_ha_state()
 
     async def async_media_previous_track(self):
