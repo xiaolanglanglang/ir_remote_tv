@@ -208,13 +208,12 @@ class IrRemoteTV(MediaPlayerEntity, RestoreEntity):
 
     async def async_select_source(self, source):
         """Select channel from source."""
+        old_source_index = 0
         for source_info in self._switch_source['sourceList']:
             if source_info['name'] == source:
                 new_source_index = source_info['index']
             if source_info['name'] == self._source:
                 old_source_index = source_info['index']
-        if old_source_index is None:
-            old_source_index = 0
         if new_source_index == old_source_index:
             return
         step = new_source_index - old_source_index
