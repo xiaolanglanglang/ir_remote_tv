@@ -137,6 +137,20 @@ class IrRemoteTV(MediaPlayerEntity, RestoreEntity):
     def source(self):
         return self._source
 
+    async def async_turn_off(self):
+        date = datetime.now()
+        self._last_command_request_time = date
+        await self.async_send_ir_command('powerOff', date)
+        self._state = STATE_OFF
+        await self.async_update_ha_state()
+
+    async def async_turn_on(self):
+        date = datetime.now()
+        self._last_command_request_time = date
+        await self.async_send_ir_command('powerOn', date)
+        self._state = STATE_ON
+        await self.async_update_ha_state()
+
     async def async_media_previous_track(self):
         date = datetime.now()
         await self.async_send_ir_command('previousChannel', date)
