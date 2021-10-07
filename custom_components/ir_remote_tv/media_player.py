@@ -81,9 +81,9 @@ class IrRemoteTV(MediaPlayerEntity, RestoreEntity):
         self._temp_lock = asyncio.Lock()
         self._last_command_request_time = datetime.now()
 
-        if 'on' in self._commands:
+        if 'powerOn' in self._commands:
             self._support_flags = self._support_flags | SUPPORT_TURN_ON
-        if 'off' in self._commands:
+        if 'powerOff' in self._commands:
             self._support_flags = self._support_flags | SUPPORT_TURN_OFF
         if 'volumeUp' in self._commands or 'volumeDown' in self._commands:
             self._support_flags = self._support_flags | SUPPORT_VOLUME_STEP | SUPPORT_VOLUME_SET
