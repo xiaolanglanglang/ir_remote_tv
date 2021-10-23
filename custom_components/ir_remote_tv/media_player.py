@@ -20,6 +20,7 @@ COMPONENT_ABS_DIR = os.path.dirname(
 
 DOMAIN = 'ir_remote_tv'
 DEFAULT_NAME = "IR Remote TV"
+LAST_SOURCE_INPUT = None
 
 CONF_UNIQUE_ID = 'unique_id'
 CONF_DEVICE_CODE = 'device_code'
@@ -77,6 +78,7 @@ class IrRemoteTV(MediaPlayerEntity, RestoreEntity):
         self._state = STATE_OFF
         self._sources_list = []
         self._source = None
+        self._last_source = None
         self._support_flags = 0
         self._volume_level = 0
         self._attr_is_volume_muted = False
@@ -148,19 +150,27 @@ class IrRemoteTV(MediaPlayerEntity, RestoreEntity):
         date = datetime.now()
         self._last_command_request_time = date
         if self._state == STATE_PLAYING and execute:
-            await self.async_send_ir_command('powerOff', date)
-        self._state = STATE_OFF
-        self._last_power_operation_time = date
-        await self.async_update_ha_state()
+            result = await self.async_send_ir_command('powerOff', date)
+        else:
+            result = True
+        if result:
+            self._state = STATE_OFF
+            self._source = None
+            self._last_power_operation_time = date
+            await self.async_update_ha_state()
 
     async def async_turn_on(self, execute=True):
         date = datetime.now()
         self._last_command_request_time = date
         if self._state == STATE_OFF and execute:
-            await self.async_send_ir_command('powerOn', date)
-        self._state = STATE_PLAYING
-        self._last_power_operation_time = date
-        await self.async_update_ha_state()
+            result = await self.async_send_ir_command('powerOn', date)
+        else:
+            result = True
+        if result:
+            self._state = STATE_PLAYING
+            self._source = self._last_source
+            self._last_power_operation_time = date
+            await self.async_update_ha_state()
 
     async def async_media_previous_track(self):
         date = datetime.now()
@@ -251,6 +261,7 @@ class IrRemoteTV(MediaPlayerEntity, RestoreEntity):
             await self.async_send_ir_command(command, datetime.now())
         await self.async_send_ir_command('ok', datetime.now())
         self._source = source
+        self._last_source = source
         await self.async_update_ha_state()
 
     async def async_added_to_hass(self):
@@ -263,15 +274,15 @@ class IrRemoteTV(MediaPlayerEntity, RestoreEntity):
             self._volume_level = last_state.attributes[ATTR_MEDIA_VOLUME_LEVEL]
         if ATTR_MEDIA_VOLUME_MUTED in last_state.attributes:
             self._attr_is_volume_muted = last_state.attributes[ATTR_MEDIA_VOLUME_MUTED]
-        if ATTR_INPUT_SOURCE in last_state.attributes:
-            self._source = last_state.attributes[ATTR_INPUT_SOURCE]
+        if LAST_SOURCE_INPUT in last_state.attributes:
+            self._last_source = last_state.attributes[LAST_SOURCE_INPUT]
 
     @property
     def extra_state_attributes(self):
         attributes = {}
         attributes[ATTR_MEDIA_VOLUME_LEVEL] = self._volume_level
         attributes[ATTR_MEDIA_VOLUME_MUTED] = self._attr_is_volume_muted
-        attributes[ATTR_INPUT_SOURCE] = self._source
+        attributes[LAST_SOURCE_INPUT] = self._last_source
         return attributes
 
     async def async_update(self):
@@ -307,6 +318,7 @@ class IrRemoteTV(MediaPlayerEntity, RestoreEntity):
                 return await self.hass.services.async_call('remote', 'send_command', service_data, blocking=True)
             except Exception as e:
                 _LOGGER.exception(e)
+                return False
 
     async def _ir_receiver_event_handler(self, event):
         print(event.data)
