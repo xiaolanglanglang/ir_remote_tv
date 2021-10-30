@@ -20,7 +20,6 @@ COMPONENT_ABS_DIR = os.path.dirname(
 
 DOMAIN = 'ir_remote_tv'
 DEFAULT_NAME = "IR Remote TV"
-LAST_SOURCE_INPUT = None
 
 CONF_UNIQUE_ID = 'unique_id'
 CONF_DEVICE_CODE = 'device_code'
@@ -28,6 +27,8 @@ CONF_REMOTE_ENTITY_ID = 'remote_entity_id'
 CONF_POWER_SENSOR = 'power_sensor'
 CONF_EVENT_NAME = 'event_name'
 CONF_LISTEN_HOMEKIT_REMOTE = 'listen_homekit_remote'
+
+LAST_SOURCE_INPUT = 'last_source_input'
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Optional(CONF_UNIQUE_ID): cv.string,
