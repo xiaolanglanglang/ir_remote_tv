@@ -28,8 +28,6 @@ CONF_POWER_SENSOR = 'power_sensor'
 CONF_EVENT_NAME = 'event_name'
 CONF_LISTEN_HOMEKIT_REMOTE = 'listen_homekit_remote'
 
-LAST_SOURCE_INPUT = 'last_source_input'
-
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Optional(CONF_UNIQUE_ID): cv.string,
     vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
@@ -79,7 +77,6 @@ class IrRemoteTV(MediaPlayerEntity, RestoreEntity):
         self._state = STATE_OFF
         self._sources_list = []
         self._source = None
-        self._last_source = None
         self._support_flags = 0
         self._volume_level = 0
         self._attr_is_volume_muted = False
@@ -147,6 +144,8 @@ class IrRemoteTV(MediaPlayerEntity, RestoreEntity):
 
     @property
     def source(self):
+        if self.state == STATE_OFF:
+            return None
         return self._source
 
     async def async_turn_off(self , execute=True):
@@ -158,7 +157,6 @@ class IrRemoteTV(MediaPlayerEntity, RestoreEntity):
             result = True
         if result:
             self._state = STATE_OFF
-            self._source = None
             self._last_power_operation_time = date
             await self.async_update_ha_state()
 
@@ -171,7 +169,6 @@ class IrRemoteTV(MediaPlayerEntity, RestoreEntity):
             result = True
         if result:
             self._state = STATE_PLAYING
-            self._source = self._last_source
             self._last_power_operation_time = date
             await self.async_update_ha_state()
 
@@ -264,7 +261,6 @@ class IrRemoteTV(MediaPlayerEntity, RestoreEntity):
             await self.async_send_ir_command(command, datetime.now())
         await self.async_send_ir_command('ok', datetime.now())
         self._source = source
-        self._last_source = source
         await self.async_update_ha_state()
 
     async def async_added_to_hass(self):
@@ -277,15 +273,15 @@ class IrRemoteTV(MediaPlayerEntity, RestoreEntity):
             self._volume_level = last_state.attributes[ATTR_MEDIA_VOLUME_LEVEL]
         if ATTR_MEDIA_VOLUME_MUTED in last_state.attributes:
             self._attr_is_volume_muted = last_state.attributes[ATTR_MEDIA_VOLUME_MUTED]
-        if LAST_SOURCE_INPUT in last_state.attributes:
-            self._last_source = last_state.attributes[LAST_SOURCE_INPUT]
+        if ATTR_INPUT_SOURCE in last_state.attributes:
+            self._source = last_state.attributes[ATTR_INPUT_SOURCE]
 
     @property
     def extra_state_attributes(self):
         attributes = {}
         attributes[ATTR_MEDIA_VOLUME_LEVEL] = self._volume_level
         attributes[ATTR_MEDIA_VOLUME_MUTED] = self._attr_is_volume_muted
-        attributes[LAST_SOURCE_INPUT] = self._last_source
+        attributes[ATTR_INPUT_SOURCE] = self._source
         return attributes
 
     async def async_update(self):
