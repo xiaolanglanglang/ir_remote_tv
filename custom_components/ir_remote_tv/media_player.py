@@ -20,6 +20,7 @@ COMPONENT_ABS_DIR = os.path.dirname(
 
 DOMAIN = 'ir_remote_tv'
 DEFAULT_NAME = "IR Remote TV"
+OPERATION_TIMEOUT = timedelta(seconds=60)
 
 CONF_UNIQUE_ID = 'unique_id'
 CONF_DEVICE_CODE = 'device_code'
@@ -294,7 +295,7 @@ class IrRemoteTV(MediaPlayerEntity, RestoreEntity):
         if power_state is None:
             return
         date = datetime.now()
-        if date - self._last_power_operation_time < timedelta(seconds=30):
+        if date - self._last_power_operation_time < OPERATION_TIMEOUT:
             return
         if power_state.state == STATE_ON:
             self._state = STATE_PLAYING
@@ -347,10 +348,11 @@ class IrRemoteTV(MediaPlayerEntity, RestoreEntity):
             await self.async_volume_down(update_request_time=False, execute=False)
         if execute_command == 'mute':
             await self.async_mute_volume(not self._attr_is_volume_muted, execute=False)
-        if execute_command == 'powerOn':
-            await self.async_turn_on(execute=False)
-        if execute_command == 'powerOff':
-            await self.async_turn_off(execute=False)
+        if execute_command == 'powerOn' or execute_command == 'powerOff':
+            if self._state == STATE_OFF:
+                await self.async_turn_on(execute=False)
+            else:
+                await self.async_turn_off(execute=False)
 
     async def _homekit_event_handler(self, event):
         data = event.data
