@@ -139,8 +139,6 @@ class IrRemoteTV(MediaPlayerEntity, RestoreEntity):
 
     @property
     def source_list(self):
-        if self.state == STATE_OFF:
-            return None
         return self._sources_list
 
     @property
