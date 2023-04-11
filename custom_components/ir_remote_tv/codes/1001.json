@@ -1,0 +1,97 @@
+{
+    "manufacturer": "sast",
+    "model": "universal",
+    "protocol": "nec",
+    "commands": {
+        "powerOn": {
+            "address": 30367,
+            "command": 55335,
+            "raw": "nE5m02lk0mk3mEsms1mUsmM2nEyAI8AjwCIAD8BjwMvAZ8AjwIvAZ8CLwKvAD8APwMPA58BnwCFmc5nE5mEsEmSZTKZzUBNJzNpjMZjAAA=="
+        },
+        "powerOff": {
+            "address": 30367,
+            "command": 55335,
+            "raw": "nE5m02lk0mk3mEsms1mUsmM2nEyAI8AjwCIAD8BjwMvAZ8AjwIvAZ8CLwKvAD8APwMPA58BnwCFmc5nE5mEsEmSZTKZzUBNJzNpjMZjAAA=="
+        },
+        "previousChannel": {
+            "address": 30367,
+            "command": 36465,
+            "raw": "nE5m02lk0mk3mEsms1mUsmM2nEyAI8AjwCIAD8BjwMvAZ8AjwIvBm8G7wOvAy8CrwCPAm8DLwCFmc5nE5mEsEmSZTKZzUBNJzNpjMZjAAA=="
+        },
+        "nextChannel": {
+            "address": 30367,
+            "command": 56355,
+            "raw": "nE5m02lk0mk3mEsms1mUsmM2nEyAI8AjwCIAD8BjwMvAZ8AjwIvAZ8APwKfAD8APwUvA68BnwCFmc5nE5mEsEmSZTKZzUBNJzNpjMZjAAA=="
+        },
+        "volumeDown": {
+            "address": 30367,
+            "command": 51765,
+            "raw": "nE5m02lk0mk3mEsms1mUsmM2nEyAI8AjwCIAD8BjwMvAZ8AjwIvAQ8BDwO/AD8CnwEPAl8FPwCFmc5nE5mEsEmSZTKZzUBNJzNpjMZjAAA=="
+        },
+        "volumeUp": {
+            "address": 30367,
+            "command": 36975,
+            "raw": "nE5m02lk0mk3mEsms1mUsmM2nEyAI8AjwCIAD8BjwMvAZ8AjwIvAZ8AjwK/AZ8APwA/Aw8BjwCFmc5nE5mEsEmSZTKZzUBNJzNpjMZjAAA=="
+        },
+        "mute": {
+            "address": 30367,
+            "command": 38760,
+            "raw": "nE5m02lk0mk3mEsms1mUsmM2nEyAI8AjwCIAD8BjwMvAZ8AjwUfAD8CjwEPAZ8BnwIvAQ8BjwCFmc5nE5mEsEmSZTKZzUBNJzNpjMZjAAA=="
+        },
+        "selectSource": {
+            "address": 30367,
+            "command": 49215,
+            "raw": "nE5m02lk0mk3mEsms1mUsmM2nEyAI8AjwCIAD8BjwMvAZ8AjwIvAZ8AjwCPCP8APwA/AD8FHwCFmc5nE5mEsEmSZTKZzUBNJzNpjMZjAAA=="
+        },
+        "up": {
+            "address": 30367,
+            "command": 52785,
+            "raw": "nE5m02lk0mk3mEsms1mUsmM2nEyAI8AjwCIAD8BjwMvAZ8AjwIvBm8G7wOvAD8CnwCPAm8CHwCFmc5nE5mEsEmSZTKZzUBNJzNpjMZjAAA=="
+        },
+        "down": {
+            "address": 30367,
+            "command": 32895,
+            "raw": "nE5m02lk0mk3mEsms1mUsmM2nEyAI8AjwCIAD8BjwMvAZ8AjwIvAZ8AjwCPBG8APwA/AD8H7wCFmc5nE5mEsEmSZTKZzUBNJzNpjMZjAAA=="
+        },
+        "left": {
+            "address": 30367,
+            "command": 55845,
+            "raw": "nE5m02lk0mk3mEsms1mUsmM2nEyAI8AjwCIAD8BjwMvAZ8AjwIvAQ8BDwGPAD8CDwEPAZ8BnwCFmc5nE5mEsEmSZTKZzUBNJzNpjMZjAAA=="
+        },
+        "right": {
+            "address": 30367,
+            "command": 53295,
+            "raw": "nE5m02lk0mk3mEsms1mUsmM2nEyAI8AjwCIAD8BjwMvAZ8AjwIvAZ8AjwK/CS8APwA/A48GPwCFmc5nE5mEsEmSZTKZzUBNJzNpjMZjAAA=="
+        },
+        "ok": {
+            "address": 30367,
+            "command": 52275,
+            "raw": "nE5m02lk0mk3mEsms1mUsmM2nEyAI8AjwCIAD8BjwMvAZ8AjwIvAZ8APwIfAD8APwMfAd8CHwCFmc5nE5mEsEmSZTKZzUBNJzNpjMZjAAA=="
+        }
+    },
+    "switchSoure": {
+        "type": "CombinationKeys",
+        "previous": "up",
+        "next": "down",
+        "sourceList": [
+            {
+                "name": "HDMI 1",
+                "index": 0
+            },
+            {
+                "name": "HDMI 2",
+                "index": 1
+            }
+        ]
+    },
+    "homekitMap": {
+        "arrow_up": "up",
+        "arrow_down": "down",
+        "arrow_left": "left",
+        "arrow_right": "right",
+        "select": "ok",
+        "play_pause": "ok",
+        "back": "back",
+        "information": "info"
+    }
+}
