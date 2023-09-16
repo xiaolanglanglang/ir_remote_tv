@@ -151,25 +151,19 @@ class IrRemoteTV(MediaPlayerEntity, RestoreEntity):
         date = datetime.now()
         self._last_command_request_time = date
         if self._state == STATE_PLAYING and execute:
-            result = await self.async_send_ir_command('powerOff', date)
-        else:
-            result = True
-        if result:
-            self._state = STATE_OFF
-            self._last_power_operation_time = date
-            await self.async_update_ha_state()
+            await self.async_send_ir_command('powerOff', date)
+        self._state = STATE_OFF
+        self._last_power_operation_time = date
+        await self.async_update_ha_state()
 
     async def async_turn_on(self, execute=True):
         date = datetime.now()
         self._last_command_request_time = date
         if self._state == STATE_OFF and execute:
-            result = await self.async_send_ir_command('powerOn', date)
-        else:
-            result = True
-        if result:
-            self._state = STATE_PLAYING
-            self._last_power_operation_time = date
-            await self.async_update_ha_state()
+            await self.async_send_ir_command('powerOn', date)
+        self._state = STATE_PLAYING
+        self._last_power_operation_time = date
+        await self.async_update_ha_state()
 
     async def async_media_previous_track(self):
         date = datetime.now()
@@ -187,14 +181,10 @@ class IrRemoteTV(MediaPlayerEntity, RestoreEntity):
         if update_request_time:
             self._last_command_request_time = date
         if execute:
-            result = await self.async_send_ir_command('volumeUp', date)
-        else:
-            result = True
-        if result:
-            self._volume_level = min(round(self._volume_level + 0.01, 2), 1)
-            self._attr_is_volume_muted = False
-            self.async_write_ha_state()
-        return result
+            await self.async_send_ir_command('volumeUp', date)
+        self._volume_level = min(round(self._volume_level + 0.01, 2), 1)
+        self._attr_is_volume_muted = False
+        self.async_write_ha_state()
 
     async def async_volume_down(self, update_request_time=True, date=None, execute=True):
         if date is None:
@@ -202,13 +192,9 @@ class IrRemoteTV(MediaPlayerEntity, RestoreEntity):
         if update_request_time:
             self._last_command_request_time = date
         if execute:
-            result = await self.async_send_ir_command('volumeDown', date)
-        else:
-            result = True
-        if result:
-            self._volume_level = max(round(self._volume_level - 0.01, 2), 0)
-            self.async_write_ha_state()
-        return result
+            await self.async_send_ir_command('volumeDown', date)
+        self._volume_level = max(round(self._volume_level - 0.01, 2), 0)
+        self.async_write_ha_state()
 
     async def async_set_volume_level(self, volume):
         date = datetime.now()
@@ -223,22 +209,17 @@ class IrRemoteTV(MediaPlayerEntity, RestoreEntity):
             return
         for _ in range(int(step_number)):
             if command == 'volumeUp':
-                result = await self.async_volume_up(False, date)
+                await self.async_volume_up(False, date)
             if command == 'volumeDown':
-                result = await self.async_volume_down(False, date)
-            if result is False:
-                break
+                await self.async_volume_down(False, date)
 
     async def async_mute_volume(self, mute, execute=True):
         date = datetime.now()
         self._last_command_request_time = date
         if execute:
-            result = await self.async_send_ir_command('mute', date)
-        else:
-            result = True
-        if result:
-            self._attr_is_volume_muted = mute
-            self.async_write_ha_state()
+            await self.async_send_ir_command('mute', date)
+        self._attr_is_volume_muted = mute
+        self.async_write_ha_state()
 
     async def async_select_source(self, source):
         """Select channel from source."""
