@@ -4,8 +4,9 @@ import os
 from datetime import datetime, timedelta
 import json
 
-from homeassistant.components.media_player import (MediaPlayerEntity, PLATFORM_SCHEMA, DEVICE_CLASS_TV)
-from homeassistant.components.media_player.const import (ATTR_INPUT_SOURCE, ATTR_MEDIA_VOLUME_MUTED, ATTR_MEDIA_VOLUME_LEVEL, SUPPORT_TURN_OFF, SUPPORT_TURN_ON, SUPPORT_PREVIOUS_TRACK, SUPPORT_NEXT_TRACK, SUPPORT_VOLUME_STEP, SUPPORT_VOLUME_SET, SUPPORT_VOLUME_MUTE, SUPPORT_SELECT_SOURCE)
+from homeassistant.components.media_player import (MediaPlayerEntity, PLATFORM_SCHEMA, MediaPlayerDeviceClass)
+from homeassistant.components.media_player.const import (ATTR_INPUT_SOURCE, ATTR_MEDIA_VOLUME_MUTED, ATTR_MEDIA_VOLUME_LEVEL)
+from homeassistant.components.media_player import MediaPlayerEntityFeature
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.const import (ATTR_ENTITY_ID, CONF_NAME, STATE_OFF, STATE_ON, STATE_PLAYING)
@@ -41,6 +42,11 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
 })
 
 
+def _load_json_file(map_file):
+    with open(map_file) as j:
+        return json.load(j)
+
+
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
     device_code = config[CONF_DEVICE_CODE]
     device_file_name = str(device_code) + '.json'
@@ -49,12 +55,11 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     if not os.path.exists(map_file):
         _LOGGER.error("JSON file not found")
         return
-    with open(map_file) as j:
-        try:
-            device_data = json.load(j)
-        except Exception:
-            _LOGGER.error("JSON file is invalid")
-            return
+    try:
+        device_data = await hass.async_add_executor_job(_load_json_file, map_file)
+    except Exception:
+        _LOGGER.error("JSON file is invalid")
+        return
     async_add_entities([IrRemoteTV(hass, config, device_data)])
 
 
@@ -88,19 +93,19 @@ class IrRemoteTV(MediaPlayerEntity, RestoreEntity):
         self._last_power_operation_time = datetime.now()
 
         if 'powerOn' in self._commands:
-            self._support_flags = self._support_flags | SUPPORT_TURN_ON
+            self._support_flags = self._support_flags | MediaPlayerEntityFeature.TURN_ON
         if 'powerOff' in self._commands:
-            self._support_flags = self._support_flags | SUPPORT_TURN_OFF
+            self._support_flags = self._support_flags | MediaPlayerEntityFeature.TURN_OFF
         if 'volumeUp' in self._commands or 'volumeDown' in self._commands:
-            self._support_flags = self._support_flags | SUPPORT_VOLUME_STEP | SUPPORT_VOLUME_SET
+            self._support_flags = self._support_flags | MediaPlayerEntityFeature.VOLUME_STEP | MediaPlayerEntityFeature.VOLUME_SET
         if 'mute' in self._commands:
-            self._support_flags = self._support_flags | SUPPORT_VOLUME_MUTE
+            self._support_flags = self._support_flags | MediaPlayerEntityFeature.VOLUME_MUTE
         if 'previousChannel' in self._commands:
-            self._support_flags = self._support_flags | SUPPORT_PREVIOUS_TRACK
+            self._support_flags = self._support_flags | MediaPlayerEntityFeature.PREVIOUS_TRACK
         if 'nextChannel' in self._commands:
-            self._support_flags = self._support_flags | SUPPORT_NEXT_TRACK
+            self._support_flags = self._support_flags | MediaPlayerEntityFeature.NEXT_TRACK
         if self._switch_source['type'] != 'none':
-            self._support_flags = self._support_flags | SUPPORT_SELECT_SOURCE
+            self._support_flags = self._support_flags | MediaPlayerEntityFeature.SELECT_SOURCE
             for source in self._switch_source['sourceList']:
                 self._sources_list.append(source['name'])
             if len(self._sources_list) > 0:
@@ -125,7 +130,7 @@ class IrRemoteTV(MediaPlayerEntity, RestoreEntity):
 
     @property
     def device_class(self):
-        return DEVICE_CLASS_TV
+        return MediaPlayerDeviceClass.TV
 
     @property
     def state(self):
